@@ -1,8 +1,6 @@
-pipeline {
-    agent { label 'dind-ssh-agent' }
-    stages {
+node ('jenkins-agent') {
         stage('Build') {
-            steps {
+            container('build') {
                 echo 'Building Image..'
                 sh """
                 docker build -t webapps/flaskapp-hw:latest .
@@ -11,7 +9,7 @@ pipeline {
             }
         }
         stage('Scan') {
-            steps {
+            container('build') {
                 echo 'Scanning Image..'
                 prismaCloudScanImage ca: '',
                 cert: '',
@@ -26,27 +24,13 @@ pipeline {
             }
         }
         stage ('Publish') {
-            steps {
+            container('build') {
                 echo 'Publishing Results..'
                 prismaCloudPublish resultsFilePattern: 'prisma-cloud-scan-results.json'
             }
         }
-        stage ('Push Image') {
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'harbor_cred', passwordVariable: 'HARBOR_PW', usernameVariable: 'HARBOR_USER')]) {
-                    echo 'Pushing Image to Registry..'
-                    sh """
-                    docker tag webapps/flaskapp-hw:latest 192.168.1.211:80/webapps/flaskapp-hw:$BUILD_NUMBER
-                    docker tag webapps/flaskapp-hw:latest 192.168.1.211:80/webapps/flaskapp-hw:latest
-                    docker login --username ${HARBOR_USER} --password ${HARBOR_PW} 192.168.1.211:80
-                    docker push 192.168.1.211:80/webapps/flaskapp-hw:$BUILD_NUMBER
-                    docker push 192.168.1.211:80/webapps/flaskapp-hw:latest
-                    """
-                }
-            }
-        }
         stage ('Cleanup') {
-            steps {
+            container('build') {
                 echo 'Cleaning up Image..'
                 sh """
                 docker rmi 192.168.1.211:80/webapps/flaskapp-hw:$BUILD_NUMBER
@@ -56,5 +40,4 @@ pipeline {
                 """
             }
         }
-    }
 }
