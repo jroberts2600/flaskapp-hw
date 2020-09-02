@@ -11,21 +11,13 @@ node ('jenkins-agent') {
         stage('Scan') {
             container('build') {
                 echo 'Scanning Image..'
-                prismaCloudScanImage ca: '',
-                cert: '',
-                dockerAddress: 'tcp://192.168.1.215:2376',
-                ignoreImageBuildTime: true,
-                image: 'webapps/flaskapp-hw:$BUILD_NUMBER',
-                key: '',
-                logLevel: 'info',
-                podmanPath: '',
-                project: '',
-                resultsFile: 'prisma-cloud-scan-results.json'
+                prismaCloudScanImage ca: '', cert: '', dockerAddress: 'unix:///var/run/docker.sock', ignoreImageBuildTime: true, image: 'webapps/flaskapp-hw:$BUILD_NUMBER', key: '', logLevel: 'info', podmanPath: '', project: '', resultsFile: 'prisma-cloud-scan-results.json'
             }
         }
         stage ('Publish') {
             container('build') {
                 echo 'Publishing Results..'
+                sh """chmod 666 prisma-cloud-scan-results.json"""
                 prismaCloudPublish resultsFilePattern: 'prisma-cloud-scan-results.json'
             }
         }
