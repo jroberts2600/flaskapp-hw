@@ -1,4 +1,5 @@
 # Docker
+
 # Build a Docker image 
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
@@ -27,3 +28,9 @@ stages:
         dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
         tags: |
           $(tag)
+
+    - task: prisma-cloud-compute-scan@3
+      inputs:
+        scanType: 'images'
+        twistlockService: 'PCC'
+        artifact: '$(tag)'
