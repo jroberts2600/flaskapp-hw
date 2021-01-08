@@ -28,7 +28,13 @@ stages:
         dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
         tags: |
           $(tag)
-
+    - task: PowerShell@2
+      inputs:
+        targetType: 'inline'
+        script: |
+          # Write your PowerShell commands here.
+          
+          docker images
     - task: prisma-cloud-compute-scan@3
       inputs:
         scanType: 'images'
