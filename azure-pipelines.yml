@@ -10,7 +10,7 @@ resources:
 - repo: self
 
 variables:
-  tag: '$(Build.BuildId)'
+  tag: 'flask:latest'
 
 stages:
 - stage: Build
@@ -39,4 +39,4 @@ stages:
       inputs:
         scanType: 'images'
         twistlockService: 'PCC'
-        artifact: '$(tag)'
+        artifact: 'flask:latest'
