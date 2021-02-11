@@ -11,7 +11,7 @@ resources:
 
 variables:
   tag: '$(Build.BuildId)' 
-  imagename: 'flask-app'
+  imagename: 'ado-flask-app'
 
 stages:
 - stage: Build
