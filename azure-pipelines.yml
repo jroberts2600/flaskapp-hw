@@ -40,5 +40,5 @@ stages:
     - task: prisma-cloud-compute-scan@3
       inputs:
         scanType: 'images'
-        twistlockService: 'PCC-Demo-Build'
+        twistlockService: 'PCC-Demo-2104'
         artifact: '$(imagename):$(tag)'
